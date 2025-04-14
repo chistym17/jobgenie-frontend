@@ -6,15 +6,22 @@ import SelectPreferences from '../components/SelectPreferences';
 
 interface UserPreferencesData {
     jobTitle: string[];
-    location: string[];
     jobType: string[];
     experienceLevel: string[];
-    salaryRange: string;
 }
 
 const PreferencesPage: NextPage = () => {
-    const handleSubmit = (preferences: UserPreferencesData) => {
+    const handleSubmit = async (preferences: UserPreferencesData) => {
         console.log('Form submitted with preferences:', preferences);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/search`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(preferences),
+        });
+        const data = await res.json();
+        console.log('API response:', data);
     };
 
     return (
