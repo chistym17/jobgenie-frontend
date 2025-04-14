@@ -48,14 +48,19 @@ const SelectPreferences: React.FC<UserPreferencesProps> = ({ onSubmit }) => {
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = e.target;
         if (name === 'jobType') {
-            setJobType([value]);
+            setJobType(prev => {
+                const newJobType = [...prev, value];
+                return newJobType;
+            });
         } else if (name === 'experienceLevel') {
-            setExperienceLevel([value]);
+            setExperienceLevel(prev => {
+                const newExperienceLevel = [...prev, value];
+                return newExperienceLevel;
+            });
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = () => {
         onSubmit({
             jobTitle,
             jobType,
@@ -76,7 +81,7 @@ const SelectPreferences: React.FC<UserPreferencesProps> = ({ onSubmit }) => {
                         Set Your Job Preferences
                     </h2>
 
-                    <form onSubmit={handleSubmit} className="space-y-12">
+                    <div className="space-y-12">
                         <div className="bg-gray-50 p-6 rounded-xl">
                             <label className="block text-lg font-medium text-gray-700 mb-3">
                                 <Briefcase className="inline-block w-5 h-5 mr-2 text-blue-600" />
@@ -88,8 +93,13 @@ const SelectPreferences: React.FC<UserPreferencesProps> = ({ onSubmit }) => {
                                         type="text"
                                         placeholder="Enter job title"
                                         className="w-full px-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900"
-                                        value={jobTitle[0] || ''}
-                                        onChange={(e) => setJobTitle([e.target.value])}
+                                        value={jobTitle.length > 0 ? jobTitle.join(', ') : ''}
+                                        onChange={(e) => {
+                                            const newTitle = e.target.value.trim();
+                                            if (newTitle && !jobTitle.includes(newTitle)) {
+                                                setJobTitle(prev => [...prev, newTitle]);
+                                            }
+                                        }}
                                         onFocus={(e) => {
                                             if (jobTitle.includes(e.target.value)) {
                                                 setJobTitle(['']);
@@ -102,10 +112,8 @@ const SelectPreferences: React.FC<UserPreferencesProps> = ({ onSubmit }) => {
                                         <button
                                             key={option}
                                             onClick={() => {
-                                                setJobTitle([option]);
-                                                if (document.activeElement instanceof HTMLInputElement &&
-                                                    document.activeElement.value === option) {
-                                                    document.activeElement.value = '';
+                                                if (!jobTitle.includes(option)) {
+                                                    setJobTitle(prev => [...prev, option]);
                                                 }
                                             }}
                                             className={`px-4 py-2.5 rounded-full text-sm transition-colors ${jobTitle.includes(option)
@@ -126,19 +134,29 @@ const SelectPreferences: React.FC<UserPreferencesProps> = ({ onSubmit }) => {
                                     <Calendar className="inline-block w-5 h-5 mr-2 text-blue-600" />
                                     Job Type
                                 </label>
-                                <select
-                                    name="jobType"
-                                    value={jobType[0] || ''}
-                                    onChange={handleSelectChange}
-                                    className="w-full px-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 bg-white text-gray-900"
-                                >
-                                    <option value="" disabled>Select job type</option>
-                                    {jobTypeOptions.map((option) => (
-                                        <option key={option} value={option}>
-                                            {option}
-                                        </option>
-                                    ))}
-                                </select>
+                                <div className="flex flex-col space-y-3">
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            placeholder="Select job types"
+                                            className="w-full px-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900"
+                                            value={jobType.length > 0 ? jobType.join(', ') : ''}
+                                            readOnly
+                                        />
+                                    </div>
+                                    <select
+                                        name="jobType"
+                                        className="w-full px-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 bg-white text-gray-900"
+                                        onChange={handleSelectChange}
+                                    >
+                                        <option value="" disabled>Select job type</option>
+                                        {jobTypeOptions.map((option) => (
+                                            <option key={option} value={option}>
+                                                {option}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
 
                             <div className="bg-gray-50 p-6 rounded-xl">
@@ -146,31 +164,42 @@ const SelectPreferences: React.FC<UserPreferencesProps> = ({ onSubmit }) => {
                                     <BarChart className="inline-block w-5 h-5 mr-2 text-blue-600" />
                                     Experience Level
                                 </label>
-                                <select
-                                    name="experienceLevel"
-                                    value={experienceLevel[0] || ''}
-                                    onChange={handleSelectChange}
-                                    className="w-full px-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 bg-white text-gray-900"
-                                >
-                                    <option value="" disabled>Select experience level</option>
-                                    {experienceLevelOptions.map((option) => (
-                                        <option key={option} value={option}>
-                                            {option}
-                                        </option>
-                                    ))}
-                                </select>
+                                <div className="flex flex-col space-y-3">
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            placeholder="Select experience levels"
+                                            className="w-full px-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900"
+                                            value={experienceLevel.length > 0 ? experienceLevel.join(', ') : ''}
+                                            readOnly
+                                        />
+                                    </div>
+                                    <select
+                                        name="experienceLevel"
+                                        className="w-full px-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 bg-white text-gray-900"
+                                        onChange={handleSelectChange}
+                                    >
+                                        <option value="" disabled>Select experience level</option>
+                                        {experienceLevelOptions.map((option) => (
+                                            <option key={option} value={option}>
+                                                {option}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="text-center">
+                        <div className="flex justify-end mt-6">
                             <button
-                                type="submit"
-                                className="inline-flex items-center justify-center px-8 py-4 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                                type="button"
+                                onClick={handleSubmit}
+                                className="inline-flex items-center px-8 py-3.5 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
                             >
                                 Continue
                             </button>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </motion.div>

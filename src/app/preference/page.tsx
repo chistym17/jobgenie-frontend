@@ -13,7 +13,7 @@ interface UserPreferencesData {
 const PreferencesPage: NextPage = () => {
     const handleSubmit = async (preferences: UserPreferencesData) => {
         console.log('Form submitted with preferences:', preferences);
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/search`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/job_search`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
