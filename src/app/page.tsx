@@ -1,6 +1,7 @@
 import HeroSection from "./components/HeroSection";
 import Navbar from "./components/Navbar";
 import WorkflowSection from "./components/WorkflowSection";
+import JobListings from "./components/JobListings";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
         <HeroSection />
       </div>
       <WorkflowSection />
+      <JobListings />
     </div>
   );
 }
