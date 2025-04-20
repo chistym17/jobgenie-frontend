@@ -4,12 +4,14 @@ import { Upload, FilePlus, Check, X, FileText, Loader2 } from "lucide-react";
 import { Toaster, toast } from "sonner";
 import Navbar from "../components/Navbar";
 import { div } from "framer-motion/client";
+import { useCurrentUser } from "../hooks/useCurrentUser";
 
 export default function ResumeUploadSection() {
     const [file, setFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
     const [uploadSuccess, setUploadSuccess] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const user = useCurrentUser();
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -33,14 +35,12 @@ export default function ResumeUploadSection() {
     };
 
     const validateAndSetFile = (file: File) => {
-        // Check file type
         const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
         if (!validTypes.includes(file.type)) {
             toast.error("Please upload a PDF or Word document");
             return;
         }
 
-        // Check file size (max 5MB)
         if (file.size > 5 * 1024 * 1024) {
             toast.error("File size should not exceed 5MB");
             return;
@@ -52,22 +52,34 @@ export default function ResumeUploadSection() {
 
     const handleUpload = async () => {
         if (!file) return;
-
         setUploading(true);
 
+        const userEmail = user?.email || "";
+        if (!userEmail) {
+            toast.error("User email not found");
+            setUploading(false);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("user_email", userEmail);
+
+        console.log(formData);
+
+        const analyzingToastId = toast.loading("Analyzing your resume...");
         try {
-            // Simulate upload delay
-            await new Promise(resolve => setTimeout(resolve, 2000));
-
-            // Your actual upload logic would go here
-            // const formData = new FormData();
-            // formData.append('resume', file);
-            // const response = await fetch('/api/upload-resume', { method: 'POST', body: formData });
-
+            const response = await fetch("http://localhost:8000/api/v1/resume/upload", {
+                method: "POST",
+                body: formData,
+            });
+            if (!response.ok) {
+                throw new Error("Upload failed");
+            }
             setUploadSuccess(true);
-            toast.success("Resume uploaded successfully!");
+            toast.success("Resume uploaded and analyzed successfully!", { id: analyzingToastId });
         } catch (error) {
-            toast.error("Failed to upload resume. Please try again.");
+            toast.error("Failed to upload/analyze resume. Please try again.", { id: analyzingToastId });
         } finally {
             setUploading(false);
         }
@@ -92,7 +104,6 @@ export default function ResumeUploadSection() {
                 <div className="max-w-6xl mx-auto">
                     <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
                         <div className="grid md:grid-cols-5">
-                            {/* Left content section */}
                             <div className="md:col-span-2 bg-gradient-to-br from-blue-500 to-blue-600 text-white p-10 flex flex-col justify-center min-h-[600px]">
                                 <h2 className="text-3xl font-bold mb-8">Unlock Your Career Potential</h2>
 
@@ -129,7 +140,6 @@ export default function ResumeUploadSection() {
                                 </div>
                             </div>
 
-                            {/* Right upload section */}
                             <div className="md:col-span-3 p-12 min-h-[600px]">
                                 <div className="text-center mb-10">
                                     <h2 className="text-3xl font-bold text-gray-800">Upload Your Resume</h2>
