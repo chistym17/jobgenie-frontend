@@ -3,9 +3,18 @@ import React from 'react';
 import Link from 'next/link';
 import { Search, User, Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { useCurrentUser } from "../hooks/useCurrentUser";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const user = useCurrentUser();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    router.push("/login");
+  };
 
   return (
     <nav className="bg-white py-2 px-4 shadow-sm sticky top-0 z-50">
@@ -66,18 +75,31 @@ const Navbar = () => {
           <button className="p-2 rounded-full hover:bg-gray-100 transition">
             <Search size={20} className="text-gray-600" />
           </button>
-          <Link
-            href="/login"
-            className="py-2 px-4 rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-50 transition"
-          >
-            Sign In
-          </Link>
-          <Link
-            href="/register"
-            className="py-2 px-4 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
-          >
-            Sign Up
-          </Link>
+          <div className="flex items-center gap-4">
+            {user ? (
+              <>
+                <span className="text-gray-700 font-medium flex items-center gap-2">
+                  <User className="w-5 h-5" />
+                  {user.name || user.email}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="ml-2 px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white font-semibold transition"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="text-blue-600 hover:underline font-medium">
+                  Login
+                </Link>
+                <Link href="/register" className="text-green-600 hover:underline font-medium">
+                  Signup
+                </Link>
+              </>
+            )}
+          </div>
         </div>
 
         <button
@@ -108,18 +130,35 @@ const Navbar = () => {
               Contact
             </Link>
             <div className="pt-4 flex flex-col space-y-3">
-              <Link
-                href="/login"
-                className="py-2 px-4 rounded-lg border border-blue-600 text-blue-600 text-center"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/register"
-                className="py-2 px-4 rounded-lg bg-blue-600 text-white text-center"
-              >
-                Sign Up
-              </Link>
+              {user ? (
+                <>
+                  <span className="text-gray-700 font-medium flex items-center gap-2">
+                    <User className="w-5 h-5" />
+                    {user.name || user.email}
+                  </span>
+                  <button
+                    onClick={handleLogout}
+                    className="ml-2 px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white font-semibold transition"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="py-2 px-4 rounded-lg border border-blue-600 text-blue-600 text-center"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="py-2 px-4 rounded-lg bg-blue-600 text-white text-center"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
