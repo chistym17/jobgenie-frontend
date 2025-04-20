@@ -16,7 +16,7 @@ export default function SearchBar({ onSearch }: { onSearch: (query: string) => v
                     placeholder="Search by job title, company or source..."
                     value={query}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
-                    className="w-full p-4 pr-12 rounded-lg border border-blue-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all shadow-sm"
+                    className=" text-black w-full p-4 pr-12 rounded-lg border border-blue-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all shadow-sm"
                 />
             </form>
         </div>

@@ -20,7 +20,7 @@ export default function JobListings() {
     const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [visibleJobs, setVisibleJobs] = useState(50);
+    const [visibleJobs, setVisibleJobs] = useState(25);
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
