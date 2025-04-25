@@ -1,19 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-
-export interface Job {
-    id: number;
-    title: string;
-    company: string;
-    location: string;
-    type: string;
-    matchScore: number;
-    shortDescription: string;
-    matchReasons: string[];
-    logo: string | null;
-}
-
+import type { WSJob } from '../recommendations/page';
 
 export interface Message {
     id: number;
@@ -21,9 +8,8 @@ export interface Message {
     text: string;
 }
 
-
 interface ChatWidgetProps {
-    selectedJob: Job | null;
+    selectedJob: WSJob | null;
 }
 
 export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
@@ -52,7 +38,7 @@ export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
-    const handleJobSelected = (job: Job) => {
+    const handleJobSelected = (job: WSJob) => {
         setIsTyping(true);
 
         setTimeout(() => {
@@ -89,7 +75,7 @@ export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
 
             if (input.includes('why') && input.includes('match')) {
                 responseText = selectedJob
-                    ? `"${selectedJob.title}" matches your skills in ${selectedJob.matchReasons.join(', ')}.`
+                    ? `"${selectedJob.title}" matches your skills in ${selectedJob.matchReasons?.join(', ')}.`
                     : "Select a job first and I can tell you why it's a good match!";
             }
             else if (input.includes('improve') || input.includes('resume')) {
