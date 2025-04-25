@@ -24,6 +24,8 @@ export interface WSJob {
     "Match Score"?: number;
 }
 
+let cachedRecommendations: WSJob[] | null = null;
+
 export default function Home() {
     const [jobs, setJobs] = useState<WSJob[]>([]);
     const [selectedJob, setSelectedJob] = useState<WSJob | null>(null);
@@ -35,6 +37,11 @@ export default function Home() {
 
     useEffect(() => {
         setLoading(true);
+        if (cachedRecommendations !== null) {
+            setJobs(cachedRecommendations);
+            setLoading(false);
+            return;
+        }
         fetch('http://localhost:8000/recommendations', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -45,7 +52,7 @@ export default function Home() {
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
+                cachedRecommendations = data || [];
                 setJobs(data || []);
                 setLoading(false);
             })
