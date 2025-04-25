@@ -1,21 +1,22 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-interface JobDetailsModalProps {
+export interface JobDetailsModalProps {
   job: Partial<{
-    title: string;
-    company: string;
-    location: string;
-    salary?: string;
-    job_type?: string;
-    match_score?: string;
-    stack?: string;
-    description?: string;
-    key_requirements?: string;
-    bonus_skills?: string;
-    how_to_apply?: string;
-    application_deadline?: string;
-    direct_link?: string;
+    "Job Title": string;
+    "Company Name": string;
+    "Location": string;
+    "Job Type"?: string;
+    "Salary"?: string;
+    "Posted Date"?: string;
+    "Application Deadline"?: string;
+    "Key Requirements"?: string[];
+    "Bonus Skills"?: string[];
+    "Stack"?: string[];
+    "Description"?: string;
+    "How to Apply"?: string[] | string;
+    "Direct Link"?: string;
+    "Match Score"?: number;
   }> | null;
   isOpen: boolean;
   onClose: () => void;
@@ -62,25 +63,25 @@ const JobDetailsModal: React.FC<JobDetailsModalProps> = ({ job, isOpen, onClose 
               &times;
             </button>
             <div className="flex flex-col gap-3">
-              {job.title && <h2 className="text-2xl font-bold text-blue-700 mb-1">{job.title}</h2>}
+              {job["Job Title"] && <h2 className="text-2xl font-bold text-blue-700 mb-1">{job["Job Title"]}</h2>}
               <div className="flex items-center gap-2 mb-2">
-                {job.company && <span className="text-gray-700 font-medium">{job.company}</span>}
-                {job.location && <span className="text-xs bg-blue-100 text-blue-700 rounded px-2 py-0.5 ml-2">{job.location}</span>}
-                {job.salary && <span className="text-xs bg-green-100 text-green-700 rounded px-2 py-0.5 ml-2">{job.salary}</span>}
+                {job["Company Name"] && <span className="text-gray-700 font-medium">{job["Company Name"]}</span>}
+                {job["Location"] && <span className="text-xs bg-blue-100 text-blue-700 rounded px-2 py-0.5 ml-2">{job["Location"]}</span>}
+                {job["Salary"] && <span className="text-xs bg-green-100 text-green-700 rounded px-2 py-0.5 ml-2">{job["Salary"]}</span>}
               </div>
               <div className="flex flex-wrap gap-2 mb-2">
-                {job.job_type && <span className="text-xs bg-gray-100 text-gray-700 rounded px-2 py-0.5">{job.job_type}</span>}
-                {job.match_score && <span className="text-xs bg-yellow-100 text-yellow-800 rounded px-2 py-0.5">Match: {job.match_score}</span>}
-                {job.stack && <span className="text-xs bg-indigo-100 text-indigo-700 rounded px-2 py-0.5">{job.stack}</span>}
+                {job["Job Type"] && <span className="text-xs bg-gray-100 text-gray-700 rounded px-2 py-0.5">{job["Job Type"]}</span>}
+                {job["Match Score"] && <span className="text-xs bg-yellow-100 text-yellow-800 rounded px-2 py-0.5">Match: {job["Match Score"]}</span>}
+                {job["Stack"] && <span className="text-xs bg-indigo-100 text-indigo-700 rounded px-2 py-0.5">{job["Stack"].join(', ')}</span>}
               </div>
-              {job.description && <div className="text-gray-700"><b>Description:</b> {job.description}</div>}
-              {job.key_requirements && <div className="text-gray-700"><b>Key Requirements:</b> {job.key_requirements}</div>}
-              {job.bonus_skills && <div className="text-gray-700"><b>Bonus Skills:</b> {job.bonus_skills}</div>}
-              {job.how_to_apply && <div className="text-gray-700"><b>How to Apply:</b> {job.how_to_apply}</div>}
-              {job.application_deadline && <div className="text-gray-500 text-xs">Deadline: {job.application_deadline}</div>}
-              {job.direct_link && (
+              {job["Description"] && <div className="text-gray-700"><b>Description:</b> {job["Description"]}</div>}
+              {job["Key Requirements"] && <div className="text-gray-700"><b>Key Requirements:</b> {job["Key Requirements"].join(', ')}</div>}
+              {job["Bonus Skills"] && <div className="text-gray-700"><b>Bonus Skills:</b> {job["Bonus Skills"].join(', ')}</div>}
+              {job["How to Apply"] && <div className="text-gray-700"><b>How to Apply:</b> {typeof job["How to Apply"] === 'string' ? job["How to Apply"] : job["How to Apply"].join(', ')}</div>}
+              {job["Application Deadline"] && <div className="text-gray-500 text-xs">Deadline: {job["Application Deadline"]}</div>}
+              {job["Direct Link"] && (
                 <a
-                  href={job.direct_link}
+                  href={job["Direct Link"]}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-2 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"

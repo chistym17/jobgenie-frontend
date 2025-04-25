@@ -12,6 +12,16 @@ interface ChatWidgetProps {
     selectedJob: WSJob | null;
 }
 
+function getJobTitle(job: WSJob) {
+    return job["Job Title"] || "";
+}
+function getJobCompany(job: WSJob) {
+    return job["Company Name"] || "";
+}
+function getMatchReasons(job: WSJob) {
+    return job["Key Requirements"] || job["Bonus Skills"] || [];
+}
+
 export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
     const [messages, setMessages] = useState<Message[]>([
         {
@@ -40,14 +50,13 @@ export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
 
     const handleJobSelected = (job: WSJob) => {
         setIsTyping(true);
-
         setTimeout(() => {
             setMessages(prev => [
                 ...prev,
                 {
                     id: Date.now(),
                     type: 'bot',
-                    text: `You've selected "${job.title}" at ${job.company}. Would you like to know why this is a good match or how to improve your application?`
+                    text: `You've selected "${getJobTitle(job)}" at ${getJobCompany(job)}. Would you like to know why this is a good match or how to improve your application?`
                 }
             ]);
             setIsTyping(false);
@@ -67,30 +76,27 @@ export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
 
     const simulateBotResponse = (userInput: string) => {
         setIsTyping(true);
-
         setTimeout(() => {
             let responseText = '';
-
             const input = userInput.toLowerCase();
-
             if (input.includes('why') && input.includes('match')) {
                 responseText = selectedJob
-                    ? `"${selectedJob.title}" matches your skills in ${selectedJob.matchReasons?.join(', ')}.`
+                    ? `"${getJobTitle(selectedJob)}" matches your skills in ${(getMatchReasons(selectedJob) as string[]).join(', ')}.`
                     : "Select a job first and I can tell you why it's a good match!";
             }
             else if (input.includes('improve') || input.includes('resume')) {
-                responseText = "To improve your application, tailor your resume to highlight relevant experience, add quantifiable achievements, and prepare for common interview questions in this field.";
-            }
-            else if (input.includes('hello') || input.includes('hi')) {
-                responseText = "Hello! How can I help with your job search today?";
+                responseText = 'Tailor your resume to the job requirements and highlight your relevant experience.';
             }
             else {
-                responseText = "I can help you understand job recommendations, improve your applications, or find more relevant positions. What specific help do you need?";
+                responseText = 'Ask about why a job matches you, or how to improve your application!';
             }
-
-            setMessages(prev => [...prev, { id: Date.now(), type: 'bot', text: responseText }]);
+            setMessages(prev => [...prev, {
+                id: Date.now(),
+                type: 'bot',
+                text: responseText
+            }]);
             setIsTyping(false);
-        }, 1500);
+        }, 1200);
     };
 
     return (
