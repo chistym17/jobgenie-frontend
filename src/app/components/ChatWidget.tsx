@@ -32,6 +32,7 @@ export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
     ]);
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
+    const [showQuickReplies, setShowQuickReplies] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -49,6 +50,33 @@ export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
     };
 
     const handleJobSelected = (job: WSJob) => {
+        setMessages(prev => [
+            ...prev,
+            {
+                id: Date.now(),
+                type: 'user',
+                text: `Selected job: "${getJobTitle(job)}" at ${getJobCompany(job)}`
+            },
+            {
+                id: Date.now() + 1,
+                type: 'bot',
+                text: `Would you like to know why this is a good fit, or get suggestions to improve your application?`
+            }
+        ]);
+        setShowQuickReplies(true);
+    };
+
+    const handleQuickReply = (text: string) => {
+        setInputValue(text);
+        setShowQuickReplies(false);
+    };
+
+    const handleSendMessage = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!inputValue.trim()) return;
+        const userMessage: Message = { id: Date.now(), type: 'user', text: inputValue };
+        setMessages(prev => [...prev, userMessage]);
+        setInputValue('');
         setIsTyping(true);
         setTimeout(() => {
             setMessages(prev => [
@@ -56,45 +84,9 @@ export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
                 {
                     id: Date.now(),
                     type: 'bot',
-                    text: `You've selected "${getJobTitle(job)}" at ${getJobCompany(job)}. Would you like to know why this is a good match or how to improve your application?`
+                    text: 'Response from backend (implement real connection here).'
                 }
             ]);
-            setIsTyping(false);
-        }, 1000);
-    };
-
-    const handleSendMessage = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!inputValue.trim()) return;
-
-        const userMessage: Message = { id: Date.now(), type: 'user', text: inputValue };
-        setMessages(prev => [...prev, userMessage]);
-        setInputValue('');
-
-        simulateBotResponse(inputValue);
-    };
-
-    const simulateBotResponse = (userInput: string) => {
-        setIsTyping(true);
-        setTimeout(() => {
-            let responseText = '';
-            const input = userInput.toLowerCase();
-            if (input.includes('why') && input.includes('match')) {
-                responseText = selectedJob
-                    ? `"${getJobTitle(selectedJob)}" matches your skills in ${(getMatchReasons(selectedJob) as string[]).join(', ')}.`
-                    : "Select a job first and I can tell you why it's a good match!";
-            }
-            else if (input.includes('improve') || input.includes('resume')) {
-                responseText = 'Tailor your resume to the job requirements and highlight your relevant experience.';
-            }
-            else {
-                responseText = 'Ask about why a job matches you, or how to improve your application!';
-            }
-            setMessages(prev => [...prev, {
-                id: Date.now(),
-                type: 'bot',
-                text: responseText
-            }]);
             setIsTyping(false);
         }, 1200);
     };
@@ -149,6 +141,23 @@ export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
                     <div ref={messagesEndRef} />
                 </AnimatePresence>
             </div>
+
+            {showQuickReplies && (
+                <div className="flex gap-2 px-4 pb-2">
+                    <button
+                        className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded-full text-sm font-medium transition"
+                        onClick={() => handleQuickReply('Explain why this is a good fit')}
+                    >
+                        Explain why this is a good fit
+                    </button>
+                    <button
+                        className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded-full text-sm font-medium transition"
+                        onClick={() => handleQuickReply('Suggest improvements for this job')}
+                    >
+                        Suggest improvements for this job
+                    </button>
+                </div>
+            )}
 
             <form onSubmit={handleSendMessage} className="p-4 bg-white border-t border-blue-100 flex items-center gap-2 rounded-b-2xl">
                 <input
