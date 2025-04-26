@@ -22,6 +22,8 @@ function getMatchReasons(job: WSJob) {
     return job["Key Requirements"] || job["Bonus Skills"] || [];
 }
 
+const WS_URL = 'ws://localhost:8000/ws/chat';
+
 export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
     const [messages, setMessages] = useState<Message[]>([
         {
@@ -34,6 +36,7 @@ export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
     const [isTyping, setIsTyping] = useState(false);
     const [showQuickReplies, setShowQuickReplies] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
+    const wsRef = useRef<WebSocket | null>(null);
 
     useEffect(() => {
         scrollToBottom();
@@ -44,6 +47,32 @@ export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
             handleJobSelected(selectedJob);
         }
     }, [selectedJob]);
+
+    useEffect(() => {
+        return () => {
+            if (wsRef.current) {
+                wsRef.current.close();
+            }
+        };
+    }, []);
+
+    const connectWebSocket = () => {
+        if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
+            wsRef.current = new WebSocket(WS_URL);
+            wsRef.current.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                setMessages(prev => ([...prev, {
+                    id: Date.now(),
+                    type: 'bot',
+                    text: data.reply || 'No response.'
+                }]));
+                setIsTyping(false);
+            };
+            wsRef.current.onclose = () => {
+                wsRef.current = null;
+            };
+        }
+    };
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -66,6 +95,12 @@ export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
         setShowQuickReplies(true);
     };
 
+    function detectInputType(text: string): 'explain' | 'suggest' | 'general' {
+        if (/explain/i.test(text)) return 'explain';
+        if (/suggest/i.test(text)) return 'suggest';
+        return 'general';
+    }
+
     const handleQuickReply = (text: string) => {
         setInputValue(text);
         setShowQuickReplies(false);
@@ -74,21 +109,28 @@ export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!inputValue.trim()) return;
+        const inputType = detectInputType(inputValue);
         const userMessage: Message = { id: Date.now(), type: 'user', text: inputValue };
         setMessages(prev => [...prev, userMessage]);
         setInputValue('');
-        setIsTyping(true);
-        setTimeout(() => {
-            setMessages(prev => [
-                ...prev,
-                {
-                    id: Date.now(),
-                    type: 'bot',
-                    text: 'Response from backend (implement real connection here).'
-                }
-            ]);
-            setIsTyping(false);
-        }, 1200);
+
+        connectWebSocket();
+        const sendPayload = () => {
+            let payload: any = { type: inputType, message: inputValue };
+            if ((inputType === 'explain' || inputType === 'suggest') && selectedJob) {
+                payload.job = {
+                    title: getJobTitle(selectedJob),
+                    company: getJobCompany(selectedJob),
+                    reasons: getMatchReasons(selectedJob)
+                };
+            }
+            wsRef.current?.send(JSON.stringify(payload));
+        };
+        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+            sendPayload();
+        } else if (wsRef.current) {
+            wsRef.current.onopen = sendPayload;
+        }
     };
 
     return (
