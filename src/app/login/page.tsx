@@ -28,7 +28,7 @@ export default function LoginPage() {
       localStorage.setItem("token", data.access_token);
       toast.success("Logged in successfully!");
       setTimeout(() => {
-        router.push("/preference");
+        router.push("/upload");
       }, 1000);
     } catch (err: any) {
       toast.error(err.message || "Invalid credentials");
@@ -53,7 +53,7 @@ export default function LoginPage() {
       localStorage.setItem("token", data.access_token);
       toast.success("Logged in as Demo User!");
       setTimeout(() => {
-        router.push("/preference");
+        router.push("/upload");
       }, 1000);
     } catch (err: any) {
       toast.error(err.message || "Demo login failed");

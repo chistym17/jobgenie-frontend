@@ -5,23 +5,23 @@ import { motion } from 'framer-motion';
 
 const steps = [
   {
-    icon: <Search className="text-blue-600" size={24} />, 
-    title: "Find Jobs", 
+    icon: <Search className="text-blue-600" size={24} />,
+    title: "Find Jobs",
     description: "Search through thousands of job opportunities from top companies"
   },
   {
-    icon: <Upload className="text-purple-600" size={24} />, 
-    title: "Submit Resume", 
+    icon: <Upload className="text-purple-600" size={24} />,
+    title: "Submit Resume",
     description: "Upload your resume and let our AI analyze it for you"
   },
   {
-    icon: <Settings className="text-green-600" size={24} />, 
-    title: "Get Recommendations", 
+    icon: <Settings className="text-green-600" size={24} />,
+    title: "Get Recommendations",
     description: "Receive personalized job recommendations based on your skills"
   },
   {
-    icon: <MessageCircle className="text-pink-600" size={24} />, 
-    title: "Apply & Interview", 
+    icon: <MessageCircle className="text-pink-600" size={24} />,
+    title: "Apply & Interview",
     description: "Get matched with perfect job opportunities and prepare for interviews"
   }
 ];
@@ -48,18 +48,18 @@ const WorkflowSection = () => {
   return (
     <div id="how-it-works" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
+        <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <motion.h2 
+          <motion.h2
             className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4"
           >
             How JobGenie Works
           </motion.h2>
-          <motion.p 
+          <motion.p
             className="text-xl text-gray-600 max-w-3xl mx-auto"
           >
             Our streamlined process helps you find, analyze, and apply to jobs that perfectly match your skills and preferences.
@@ -67,7 +67,7 @@ const WorkflowSection = () => {
         </motion.div>
 
         <div className="relative">
-          <motion.div 
+          <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
             variants={container}
             initial="hidden"
@@ -75,7 +75,7 @@ const WorkflowSection = () => {
             viewport={{ once: true }}
           >
             {steps.map((step, index) => (
-              <motion.div 
+              <motion.div
                 key={index}
                 variants={item}
                 className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 relative"
@@ -104,7 +104,7 @@ const WorkflowSection = () => {
             {steps.map((_, index) => {
               if (index === steps.length - 1) return null;
               return (
-                <div 
+                <div
                   key={index}
                   className="absolute left-0 top-1/2 -translate-y-1/2 transform -translate-x-1/2"
                   style={{
@@ -120,7 +120,7 @@ const WorkflowSection = () => {
           </div>
         </div>
 
-        <motion.div 
+        <motion.div
           className="mt-16 text-center"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -128,7 +128,7 @@ const WorkflowSection = () => {
           transition={{ duration: 0.6, delay: 0.6 }}
         >
           <motion.a
-            href="#job-search"
+            href="/jobs"
             className="inline-flex items-center justify-center py-3 px-8 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-lg font-semibold"
           >
             Start Your Job Search Journey
