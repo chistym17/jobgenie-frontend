@@ -27,7 +27,7 @@ export default function JobListings() {
         const fetchJobs = async () => {
             try {
                 setIsLoading(true);
-                const response = await fetch('http://localhost:8000/api/v1/jobs');
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/jobs`);
 
                 if (!response.ok) {
                     throw new Error('Failed to fetch jobs');
