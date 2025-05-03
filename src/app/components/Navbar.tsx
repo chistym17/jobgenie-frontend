@@ -57,17 +57,17 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center space-x-8">
+          <Link href="/" className="text-gray-700 hover:text-blue-600 transition">
+            Home
+          </Link>
+          <Link href="/upload" className="text-gray-700 hover:text-blue-600 transition">
+            Upload Resume
+          </Link>
           <Link href="/jobs" className="text-gray-700 hover:text-blue-600 transition">
-            Find Jobs
+            Explore Jobs
           </Link>
           <Link href="/about" className="text-gray-700 hover:text-blue-600 transition">
-            How It Works
-          </Link>
-          <Link href="/pricing" className="text-gray-700 hover:text-blue-600 transition">
-            Pricing
-          </Link>
-          <Link href="/contact" className="text-gray-700 hover:text-blue-600 transition">
-            Contact
+            About
           </Link>
         </div>
 
