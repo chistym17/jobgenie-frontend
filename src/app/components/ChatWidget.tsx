@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { WSJob } from '../recommendations/page';
+import { useCurrentUser } from '../hooks/useCurrentUser';
 
 export interface Message {
     id: number;
@@ -37,6 +38,8 @@ export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
     const [showQuickReplies, setShowQuickReplies] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const wsRef = useRef<WebSocket | null>(null);
+    const user = useCurrentUser()
+    const email = user?.email;
 
     useEffect(() => {
         scrollToBottom();
@@ -108,6 +111,7 @@ export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log("email", email);
         if (!inputValue.trim()) return;
         const inputType = detectInputType(inputValue);
         const userMessage: Message = { id: Date.now(), type: 'user', text: inputValue };
@@ -121,7 +125,7 @@ export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
                 payload.job = {
                     title: getJobTitle(selectedJob),
                     company: getJobCompany(selectedJob),
-                    reasons: getMatchReasons(selectedJob)
+                    email: email
                 };
             }
             wsRef.current?.send(JSON.stringify(payload));

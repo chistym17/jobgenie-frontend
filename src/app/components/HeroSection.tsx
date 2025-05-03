@@ -59,16 +59,16 @@ const HeroSection = () => {
               transition={{ duration: 0.6, delay: 0.4 }}
             >
               <motion.a
-                href="#job-search"
+                href="/upload"
                 className="py-3 px-6 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
-                Start Your Search
+                Upload Resume
               </motion.a>
               <motion.a
-                href="#how-it-works"
+                href="#joblistings"
                 className="py-3 px-6 rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-50 transition"
               >
-                Learn How It Works
+                Explore Jobs
               </motion.a>
             </motion.div>
           </motion.div>

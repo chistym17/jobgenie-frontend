@@ -11,7 +11,9 @@ export default function Home() {
         <HeroSection />
       </div>
       <WorkflowSection />
-      <JobListings />
+      <div id="joblistings">
+        <JobListings />
+      </div>
     </div>
   );
 }
