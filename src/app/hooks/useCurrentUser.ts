@@ -24,14 +24,19 @@ function parseJwt(token: string): any {
   }
 }
 
-export function useCurrentUser(): User | null {
+export function useCurrentUser(): { user: User | null; loading: boolean } {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") {
+      setLoading(false);
+      return;
+    }
     const token = localStorage.getItem("token");
     if (!token) {
       setUser(null);
+      setLoading(false);
       return;
     }
     const payload = parseJwt(token);
@@ -40,7 +45,8 @@ export function useCurrentUser(): User | null {
     } else {
       setUser(null);
     }
+    setLoading(false);
   }, []);
 
-  return user;
+  return { user, loading };
 }

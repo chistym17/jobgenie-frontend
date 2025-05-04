@@ -33,7 +33,7 @@ export default function SignupPage() {
       toast.success("Account created successfully!");
 
       setTimeout(() => {
-        router.push("/preference");
+        router.push("/upload");
       }, 1000);
 
     } catch (err: any) {

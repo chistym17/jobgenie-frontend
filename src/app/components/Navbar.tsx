@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const user = useCurrentUser();
+  const { user } = useCurrentUser();
   const router = useRouter();
 
   const handleLogout = () => {

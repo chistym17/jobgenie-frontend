@@ -35,13 +35,16 @@ export default function Home() {
     const [modalOpen, setModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const currentUser = useCurrentUser();
-    const email = currentUser?.email;
+    const { user, loading: userLoading } = useCurrentUser();
+    const email = user?.email;
 
     useEffect(() => {
+        if (userLoading) {
+            return;
+        }
         setLoading(true);
 
-        if (!currentUser) {
+        if (!user) {
             router.push('/login');
             return;
         }

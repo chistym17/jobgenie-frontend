@@ -25,6 +25,7 @@ export default function JobListings() {
 
     useEffect(() => {
         const fetchJobs = async () => {
+            console.log(process.env.NEXT_PUBLIC_BACKEND_URL)
             try {
                 setIsLoading(true);
                 const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/jobs`);

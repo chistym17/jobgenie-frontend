@@ -38,7 +38,7 @@ export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
     const [showQuickReplies, setShowQuickReplies] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const wsRef = useRef<WebSocket | null>(null);
-    const user = useCurrentUser()
+    const { user } = useCurrentUser()
     const email = user?.email;
 
     useEffect(() => {
