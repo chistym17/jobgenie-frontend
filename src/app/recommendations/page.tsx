@@ -39,22 +39,20 @@ export default function Home() {
     const email = currentUser?.email;
 
     useEffect(() => {
-        // Show loading state while checking user
         setLoading(true);
-        
+
         if (!currentUser) {
             router.push('/login');
             return;
         }
 
-        // If user exists, proceed with loading recommendations
         if (cachedRecommendations !== null) {
             setJobs(cachedRecommendations);
             setLoading(false);
             return;
         }
 
-        fetch('http://localhost:8000/recommendations', {
+        fetch(`${process.env.NEXT_PUBLIC_WORKER_URL}/recommendations`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: email })

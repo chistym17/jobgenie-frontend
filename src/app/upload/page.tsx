@@ -77,7 +77,7 @@ export default function ResumeUploadSection() {
 
         const analyzingToastId = toast.loading("Analyzing your resume...");
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/resume/upload`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/resume/upload`, {
                 method: "POST",
                 body: formData,
             });

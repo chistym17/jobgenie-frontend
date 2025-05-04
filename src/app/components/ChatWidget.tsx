@@ -23,7 +23,7 @@ function getMatchReasons(job: WSJob) {
     return job["Key Requirements"] || job["Bonus Skills"] || [];
 }
 
-const WS_URL = 'ws://localhost:8000/ws/chat';
+const WS_URL = process.env.NEXT_PUBLIC_WS_URL || " ";
 
 export default function ChatWidget({ selectedJob }: ChatWidgetProps) {
     const [messages, setMessages] = useState<Message[]>([
