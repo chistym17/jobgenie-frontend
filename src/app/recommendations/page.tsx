@@ -7,6 +7,7 @@ import Navbar from '../components/Navbar';
 import { useCurrentUser } from '../hooks/useCurrentUser';
 import { motion } from 'framer-motion';
 import RecommendationLoader from '../components/RecommendationLoader';
+import { useRouter } from 'next/navigation';
 
 export interface WSJob {
     "Job Title": string;
@@ -28,6 +29,7 @@ export interface WSJob {
 let cachedRecommendations: WSJob[] | null = null;
 
 export default function Home() {
+    const router = useRouter();
     const [jobs, setJobs] = useState<WSJob[]>([]);
     const [selectedJob, setSelectedJob] = useState<WSJob | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
@@ -37,12 +39,21 @@ export default function Home() {
     const email = currentUser?.email;
 
     useEffect(() => {
+        // Show loading state while checking user
         setLoading(true);
+        
+        if (!currentUser) {
+            router.push('/login');
+            return;
+        }
+
+        // If user exists, proceed with loading recommendations
         if (cachedRecommendations !== null) {
             setJobs(cachedRecommendations);
             setLoading(false);
             return;
         }
+
         fetch('http://localhost:8000/recommendations', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
