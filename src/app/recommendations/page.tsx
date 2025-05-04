@@ -6,6 +6,7 @@ import ChatWidget from '../components/ChatWidget';
 import Navbar from '../components/Navbar';
 import { useCurrentUser } from '../hooks/useCurrentUser';
 import { motion } from 'framer-motion';
+import RecommendationLoader from '../components/RecommendationLoader';
 
 export interface WSJob {
     "Job Title": string;
@@ -83,7 +84,7 @@ export default function Home() {
                                 <h2 className="text-xl font-bold text-gray-800">Your Recommendations</h2>
                             </div>
                             {loading ? (
-                                <div className="space-y-4">Loading...</div>
+                                <RecommendationLoader />
                             ) : error ? (
                                 <div className="text-red-500">{error}</div>
                             ) : (

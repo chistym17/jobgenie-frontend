@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef } from "react";
-import { Upload, FilePlus, Check, X, FileText, Loader2 } from "lucide-react";
+import { Upload, FilePlus, Check, X, FileText, Loader2, Link } from "lucide-react";
 import { Toaster, toast } from "sonner";
 import Navbar from "../components/Navbar";
 import { div } from "framer-motion/client";
@@ -253,10 +253,11 @@ export default function ResumeUploadSection() {
                                 Based on your resume, we've found <span className="font-semibold text-blue-600">18 job matches</span> where you would be a top candidate.
                                 Complete your profile to see personalized recommendations.
                             </p>
-
-                            <button className="bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition font-medium text-lg">
-                                View Job Matches
-                            </button>
+                            <Link href="/recommendations">
+                                <button className="bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition font-medium text-lg">
+                                    View Job Matches
+                                </button>
+                            </Link>
                         </div>
                     )}
                 </div>
