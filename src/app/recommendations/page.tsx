@@ -39,6 +39,10 @@ export default function Home() {
     const email = user?.email;
 
     useEffect(() => {
+        console.log('User loading status:', userLoading);
+        console.log('Current user:', user);
+        console.log('Email:', email);
+
         if (userLoading) {
             return;
         }
@@ -55,7 +59,15 @@ export default function Home() {
             return;
         }
 
-        fetch(`${process.env.NEXT_PUBLIC_WORKER_URL}/recommendations`, {
+        const workerUrl = process.env.NEXT_PUBLIC_WORKER_URL;
+
+        if (!workerUrl) {
+            setError('Worker URL not configured');
+            setLoading(false);
+            return;
+        }
+
+        fetch(workerUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: email })
@@ -65,15 +77,17 @@ export default function Home() {
                 return res.json();
             })
             .then((data) => {
+                console.log('API Response:', data);
                 cachedRecommendations = data || [];
                 setJobs(data || []);
                 setLoading(false);
             })
             .catch((err) => {
-                setError(err.message);
+                console.error('Error:', err);
+                setError(err.message || 'Failed to fetch recommendations');
                 setLoading(false);
             });
-    }, []);
+    }, [user, userLoading]);
 
     return (
         <div className="min-h-screen bg-gray-50">
