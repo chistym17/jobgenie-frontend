@@ -65,7 +65,7 @@ const HeroSection = () => {
                 Upload Resume
               </motion.a>
               <motion.a
-                href="#joblistings"
+                href="/explore-jobs"
                 className="py-3 px-6 rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-50 transition"
               >
                 Explore Jobs

@@ -39,9 +39,6 @@ export default function Home() {
     const email = user?.email;
 
     useEffect(() => {
-        console.log('User loading status:', userLoading);
-        console.log('Current user:', user);
-        console.log('Email:', email);
 
         if (userLoading) {
             return;
@@ -128,8 +125,19 @@ export default function Home() {
                                                 )}
                                             </div>
                                             <div className="flex flex-col md:flex-row gap-2 mt-2 md:mt-0">
-                                                {job["How to Apply"] && (
-                                                    <a href={job["Direct Link"] || '#'} target="_blank" rel="noopener noreferrer" className="px-3 py-1 bg-blue-600 text-white rounded text-sm text-center">Apply</a>
+                                                {job["Direct Link"] ? (
+                                                    <a 
+                                                        href={job["Direct Link"]} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer" 
+                                                        className="px-3 py-1 bg-blue-600 text-white rounded text-sm text-center hover:bg-blue-700 transition-colors"
+                                                    >
+                                                        Apply
+                                                    </a>
+                                                ) : (
+                                                    <div className="px-3 py-1 bg-gray-100 text-gray-500 rounded text-sm text-center">
+                                                        No Direct Link
+                                                    </div>
                                                 )}
                                                 <button
                                                     className="px-3 py-1 bg-gray-200 rounded text-sm text-gray-800"
