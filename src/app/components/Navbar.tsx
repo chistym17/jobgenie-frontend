@@ -63,7 +63,7 @@ const Navbar = () => {
           <Link href="/upload" className="text-gray-700 hover:text-blue-600 transition">
             Upload Resume
           </Link>
-          <Link href="/jobs" className="text-gray-700 hover:text-blue-600 transition">
+          <Link href="/explore-jobs" className="text-gray-700 hover:text-blue-600 transition">
             Explore Jobs
           </Link>
           <Link href="/recommendations" className="text-gray-700 hover:text-blue-600 transition">
@@ -94,7 +94,7 @@ const Navbar = () => {
                 <Link href="/login" className="text-blue-600 hover:underline font-medium">
                   Login
                 </Link>
-                <Link href="/register" className="text-green-600 hover:underline font-medium">
+                <Link href="/signup" className="text-green-600 hover:underline font-medium">
                   Signup
                 </Link>
               </>
