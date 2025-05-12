@@ -56,7 +56,7 @@ export default function Home() {
             return;
         }
 
-        const workerUrl = process.env.NEXT_PUBLIC_WORKER_URL;
+        const workerUrl = process.env.NEXT_PUBLIC_RECOMMENDATIONS_URL;
 
         if (!workerUrl) {
             setError('Worker URL not configured');
