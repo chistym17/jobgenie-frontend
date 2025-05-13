@@ -8,6 +8,7 @@ import { useCurrentUser } from '../hooks/useCurrentUser';
 import { motion } from 'framer-motion';
 import RecommendationLoader from '../components/RecommendationLoader';
 import { useRouter } from 'next/navigation';
+import RecommendationProgress from '../components/RecommendationProgress';
 
 export interface WSJob {
     "Job Title": string;
@@ -35,11 +36,11 @@ export default function Home() {
     const [modalOpen, setModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [isProcessing, setIsProcessing] = useState(false);
     const { user, loading: userLoading } = useCurrentUser();
     const email = user?.email;
 
     useEffect(() => {
-
         if (userLoading) {
             return;
         }
@@ -57,6 +58,7 @@ export default function Home() {
         }
 
         const workerUrl = process.env.NEXT_PUBLIC_RECOMMENDATIONS_URL;
+        const taskId = localStorage.getItem('recommendation_task_id');
 
         if (!workerUrl) {
             setError('Worker URL not configured');
@@ -64,26 +66,56 @@ export default function Home() {
             return;
         }
 
-        fetch(workerUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email })
-        })
-            .then(async (res) => {
-                if (!res.ok) throw new Error('Failed to fetch recommendations');
-                return res.json();
+        if (taskId) {
+            setIsProcessing(true);
+            const pollInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`${workerUrl}/${taskId}`);
+                    const data = await response.json();
+                    
+                    if (data.status === 'completed') {
+                        clearInterval(pollInterval);
+                        localStorage.removeItem('recommendation_task_id');
+                        cachedRecommendations = data.data;
+                        setJobs(data.data);
+                        setLoading(false);
+                    }
+                } catch (err) {
+                    console.error('Error polling task:', err);
+                    clearInterval(pollInterval);
+                    setError('Failed to fetch recommendations');
+                    setLoading(false);
+                }
+            }, 1000); 
+
+            return () => clearInterval(pollInterval);
+        } else {
+            setIsProcessing(false);
+            fetch(workerUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
             })
-            .then((data) => {
-                console.log('API Response:', data);
-                cachedRecommendations = data || [];
-                setJobs(data || []);
-                setLoading(false);
-            })
-            .catch((err) => {
-                console.error('Error:', err);
-                setError(err.message || 'Failed to fetch recommendations');
-                setLoading(false);
-            });
+                .then(async (res) => {
+                    if (!res.ok) throw new Error('Failed to fetch recommendations');
+                    return res.json();
+                })
+                .then((data) => {
+                    if (data.task_id) {
+                        localStorage.setItem('recommendationTaskId', data.task_id);
+                        setLoading(true); // Keep loading while task is processing
+                    } else {
+                        cachedRecommendations = data.jobs || [];
+                        setJobs(data.jobs || []);
+                        setLoading(false);
+                    }
+                })
+                .catch((err) => {
+                    console.error('Error:', err);
+                    setError(err.message || 'Failed to fetch recommendations');
+                    setLoading(false);
+                });
+        }
     }, [user, userLoading]);
 
     return (
@@ -107,7 +139,11 @@ export default function Home() {
                                 <h2 className="text-xl font-bold text-gray-800">Your Recommendations</h2>
                             </div>
                             {loading ? (
-                                <RecommendationLoader />
+                                isProcessing ? (
+                                    <RecommendationProgress />
+                                ) : (
+                                    <RecommendationLoader />
+                                )
                             ) : error ? (
                                 <div className="text-red-500">{error}</div>
                             ) : (

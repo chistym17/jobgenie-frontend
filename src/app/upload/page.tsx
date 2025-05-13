@@ -7,6 +7,7 @@ import { useCurrentUser } from "../hooks/useCurrentUser";
 import { useRouter } from "next/navigation";
 import ResumeAnalysis from "../components/ResumeAnalysis";
 import { startEmbedderTask } from "../utils/startEmbedderTask";
+import { startRecommendationTask } from "../utils/startrecommendationtask";
 
 export default function ResumeUploadSection() {
     const router = useRouter();
@@ -103,6 +104,11 @@ export default function ResumeUploadSection() {
             setResumeData(data);
             setUploadSuccess(true);
             toast.success("Resume uploaded and analyzed successfully!", { id: analyzingToastId });
+            // Start the recommendation task after 4 seconds
+            setTimeout(() => {
+                startRecommendationTask(userEmail);
+            }, 4000);
+
         } catch (error) {
             toast.error("Failed to upload/analyze resume. Please try again.", { id: analyzingToastId });
         } finally {
