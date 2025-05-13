@@ -17,6 +17,7 @@ export async function startRecommendationTask(userEmail: string): Promise<{ task
         }
 
         const data = await response.json();
+        console.log(data);
         localStorage.setItem('recommendation_task_id', data.task_id);
         return data;
     } catch (error) {

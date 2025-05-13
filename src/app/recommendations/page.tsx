@@ -72,6 +72,8 @@ export default function Home() {
                 try {
                     const response = await fetch(`${workerUrl}/${taskId}`);
                     const data = await response.json();
+
+                    console.log(data);
                     
                     if (data.status === 'completed') {
                         clearInterval(pollInterval);

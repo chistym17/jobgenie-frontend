@@ -101,13 +101,16 @@ export default function ResumeUploadSection() {
             
             startEmbedderTask(userEmail);
             const data = await response.json();
+
+            setTimeout(() => {
+                startRecommendationTask(userEmail);
+            }, 4000);
+            
             setResumeData(data);
             setUploadSuccess(true);
             toast.success("Resume uploaded and analyzed successfully!", { id: analyzingToastId });
             // Start the recommendation task after 4 seconds
-            setTimeout(() => {
-                startRecommendationTask(userEmail);
-            }, 4000);
+          
 
         } catch (error) {
             toast.error("Failed to upload/analyze resume. Please try again.", { id: analyzingToastId });
