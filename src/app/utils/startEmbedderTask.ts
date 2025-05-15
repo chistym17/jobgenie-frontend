@@ -1,26 +1,54 @@
 /**
- * Triggers the precomputation of resume embeddings for a given user email
  * @param userEmail - The email of the user whose resume embeddings need to be computed
  * @returns Promise containing the task ID and message
  */
-export async function startEmbedderTask(userEmail: string): Promise<{ task_id: string; message: string }> {
-    try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_WORKER_URL}/precompute-embedding`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: userEmail }),
-        });
 
-        if (!response.ok) {
-            throw new Error('Failed to start embedding computation');
+import { startRecommendationTask } from './startrecommendationtask';
+
+export async function pullEmbedderTask(task_id: string, userEmail: string): Promise<{ status: 'pending' | 'completed' | 'error', message: string, recommendation_task_id?: string }> {
+    const pollInterval = 1000; 
+    const maxAttempts = 30; 
+    let attempts = 0;
+
+    const pollTask = async (): Promise<{ status: 'pending' | 'completed' | 'error', message: string, recommendation_task_id?: string }> => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_WORKER_URL}/precompute-embedding/${task_id}`);
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch task status');
+            }
+
+            const data = await response.json();
+            
+            if (data.status === 'completed') {
+                const recommendationData = await startRecommendationTask(userEmail);
+                
+                return {
+                    status: 'completed',
+                    message: 'Embedding task completed and recommendation task started',
+                    recommendation_task_id: recommendationData.task_id
+                };
+            }
+
+            if (attempts >= maxAttempts) {
+                return {
+                    status: 'error',
+                    message: 'Task polling timeout after 5 minutes'
+                };
+            }
+
+            await new Promise(resolve => setTimeout(resolve, pollInterval));
+            attempts++;
+            return pollTask();
+
+        } catch (error) {
+            console.error('Error checking task status:', error);
+            return {
+                status: 'error',
+                message: error instanceof Error ? error.message : 'An unknown error occurred'
+            };
         }
+    };
 
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error starting embedding task:', error);
-        throw error;
-    }
-} 
+    return pollTask();
+}

@@ -6,8 +6,7 @@ import Navbar from "../components/Navbar";
 import { useCurrentUser } from "../hooks/useCurrentUser";
 import { useRouter } from "next/navigation";
 import ResumeAnalysis from "../components/ResumeAnalysis";
-import { startEmbedderTask } from "../utils/startEmbedderTask";
-import { startRecommendationTask } from "../utils/startrecommendationtask";
+import { pullEmbedderTask} from "../utils/startEmbedderTask";
 
 export default function ResumeUploadSection() {
     const router = useRouter();
@@ -99,17 +98,15 @@ export default function ResumeUploadSection() {
                 throw new Error("Upload failed");
             }
             
-            startEmbedderTask(userEmail);
             const data = await response.json();
 
-            setTimeout(() => {
-                startRecommendationTask(userEmail);
-            }, 4000);
-            
-            setResumeData(data);
+            const task_id = data.task_id;
+
+            await pullEmbedderTask(task_id,userEmail)
+
+            setResumeData(data.resume);
             setUploadSuccess(true);
             toast.success("Resume uploaded and analyzed successfully!", { id: analyzingToastId });
-            // Start the recommendation task after 4 seconds
           
 
         } catch (error) {

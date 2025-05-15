@@ -73,7 +73,6 @@ export default function Home() {
                     const response = await fetch(`${workerUrl}/${taskId}`);
                     const data = await response.json();
 
-                    console.log(data);
                     
                     if (data.status === 'completed') {
                         clearInterval(pollInterval);
@@ -105,7 +104,7 @@ export default function Home() {
                 .then((data) => {
                     if (data.task_id) {
                         localStorage.setItem('recommendationTaskId', data.task_id);
-                        setLoading(true); // Keep loading while task is processing
+                        setLoading(true); 
                     } else {
                         cachedRecommendations = data.jobs || [];
                         setJobs(data.jobs || []);

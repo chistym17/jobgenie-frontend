@@ -8,10 +8,10 @@ interface Stage {
 }
 
 const stages: Stage[] = [
-    { name: "Fetching Resume Data", duration: 3000 },
-    { name: "Extracting Key Points", duration: 3000 },
-    { name: "Searching Similar Jobs", duration: 3000 },
-    { name: "Making Final Recommendations", duration: 3000 }
+    { name: "Fetching Resume Data", duration: 5000 },
+    { name: "Extracting Key Points", duration: 5000 },
+    { name: "Searching Similar Jobs", duration: 5000 },
+    { name: "Making Final Recommendations", duration: 5000 }
 ];
 
 export default function RecommendationProgress() {
