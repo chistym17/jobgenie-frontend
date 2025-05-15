@@ -5,17 +5,21 @@ import { Toaster, toast } from "sonner";
 import Navbar from "../components/Navbar";
 import { useCurrentUser } from "../hooks/useCurrentUser";
 import { useRouter } from "next/navigation";
+import ResumeAnalysis from "../components/ResumeAnalysis";
+import { pullEmbedderTask} from "../utils/startEmbedderTask";
 
 export default function ResumeUploadSection() {
     const router = useRouter();
     const [file, setFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
     const [uploadSuccess, setUploadSuccess] = useState(false);
+    const [resumeData, setResumeData] = useState<any>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const analysisRef = useRef<HTMLDivElement>(null);
     const { user, loading } = useCurrentUser();
+    const userEmail = user?.email || "";
 
     useEffect(() => {
-
         if (loading) {
             return;
         }
@@ -23,6 +27,15 @@ export default function ResumeUploadSection() {
             router.push('/login');
         }
     }, [user, router, loading]);
+
+    useEffect(() => {
+        if (uploadSuccess && resumeData && analysisRef.current) {
+            analysisRef.current.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    }, [uploadSuccess, resumeData]);
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -65,7 +78,6 @@ export default function ResumeUploadSection() {
         if (!file) return;
         setUploading(true);
 
-        const userEmail = user?.email || "";
         if (!userEmail) {
             toast.error("User email not found");
             setUploading(false);
@@ -76,8 +88,6 @@ export default function ResumeUploadSection() {
         formData.append("file", file);
         formData.append("user_email", userEmail);
 
-        console.log(formData);
-
         const analyzingToastId = toast.loading("Analyzing your resume...");
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/resume/upload`, {
@@ -87,8 +97,18 @@ export default function ResumeUploadSection() {
             if (!response.ok) {
                 throw new Error("Upload failed");
             }
+            
+            const data = await response.json();
+
+            const task_id = data.task_id;
+
+            await pullEmbedderTask(task_id,userEmail)
+
+            setResumeData(data.resume);
             setUploadSuccess(true);
             toast.success("Resume uploaded and analyzed successfully!", { id: analyzingToastId });
+          
+
         } catch (error) {
             toast.error("Failed to upload/analyze resume. Please try again.", { id: analyzingToastId });
         } finally {
@@ -251,24 +271,9 @@ export default function ResumeUploadSection() {
                         </div>
                     </div>
 
-                    {uploadSuccess && (
-                        <div className="mt-10 bg-white p-8 rounded-xl shadow-lg">
-                            <div className="flex items-center mb-5">
-                                <div className="bg-green-50 p-3 rounded-full mr-4">
-                                    <Check className="h-6 w-6 text-green-600" />
-                                </div>
-                                <h3 className="font-bold text-xl text-gray-800">Resume Analysis Complete</h3>
-                            </div>
-
-                            <p className="text-gray-600 mb-6 text-lg">
-                                Based on your resume, we've found <span className="font-semibold text-blue-600">18 job matches</span> where you would be a top candidate.
-                                Complete your profile to see personalized recommendations.
-                            </p>
-                            <Link href="/recommendations">
-                                <button className="bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition font-medium text-lg">
-                                    View Job Matches
-                                </button>
-                            </Link>
+                    {uploadSuccess && resumeData && (
+                        <div className="mt-10" ref={analysisRef}>
+                            <ResumeAnalysis data={resumeData} />
                         </div>
                     )}
                 </div>
