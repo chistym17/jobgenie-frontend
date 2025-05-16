@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🖥️ Frontend - JobGenie
 
-## Getting Started
+The frontend of **JobGenie** is built using **Next.js** and serves as the primary user interface for job seekers to interact with the platform. It offers a seamless and responsive experience across devices, allowing users to explore job listings, upload their resumes, receive personalized job recommendations, and engage with an AI-powered career assistant.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 🎯 Key Responsibilities
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Job Listings Dashboard**: Displays aggregated job postings in a clean, searchable interface with filters and match scoring indicators.
+- **Resume Upload & Matching**: Allows users to upload resumes (PDF) and triggers backend processing for tailored job suggestions.
+- **Real-Time AI Chat**: Enables users to interact with a conversational AI assistant for resume feedback, job-fit explanations, and career advice—powered via WebSocket for real-time responses.
+- **Authentication UI**: Handles user login and registration using JWT-based authentication.
+- **Dynamic Routing**: Includes protected routes for dashboards, public pages for landing, and modular components for maintainability.
+- **User Experience (UX)**: Styled with **Tailwind CSS**, it ensures a smooth, responsive, and accessible interface for all features.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🧩 Architecture Highlights
 
-## Learn More
+- Communicates with the **Primary Backend (PB)** via REST APIs for authentication, job listings, and resume uploads.
+- Connects to the **Worker Service** over **WebSocket** for AI interactions and live recommendations.
+- Designed with **reusability** in mind—shared components, hooks, and layout templates for faster development and consistent UI/UX.
+- Integrates seamlessly with backend services using **environment-based API routing** for flexibility across staging and production.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 🛠️ Tech Stack (Frontend)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Framework**: Next.js (React)
+- **Styling**: Tailwind CSS
+- **Authentication**: JWT
+- **Real-Time Communication**: WebSocket
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> **Note:** This frontend is tightly coupled with the JobGenie backend and worker services. Ensure they are running to fully utilize all platform features.
